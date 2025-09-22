@@ -1,5 +1,6 @@
 package dev.david2379.gpsapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,37 +12,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import dev.david2379.gpsapp.logic.gps.ShowGpsActivity
+import dev.david2379.gpsapp.ui.MainScreen
 import dev.david2379.gpsapp.ui.theme.GPSAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val navigateToGPSLocationIntent: Intent by lazy {
+            Intent(this, ShowGpsActivity::class.java)
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             GPSAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                MainScreen(
+                    onGPSLocationNavigate = { startActivity(navigateToGPSLocationIntent) },
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GPSAppTheme {
-        Greeting("Android")
     }
 }
