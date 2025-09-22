@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.david.gpsapp"
+    namespace = "dev.david2379.gpsapp"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "dev.david.gpsapp"
+        applicationId = "dev.david2379.gpsapp"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

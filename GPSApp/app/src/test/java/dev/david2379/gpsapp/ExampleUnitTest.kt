@@ -1,4 +1,4 @@
-package dev.david.gpsapp
+package dev.david2379.gpsapp
 
 import org.junit.Test
 

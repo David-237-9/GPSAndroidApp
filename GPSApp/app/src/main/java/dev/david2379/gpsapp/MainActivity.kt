@@ -1,4 +1,4 @@
-package dev.david.gpsapp
+package dev.david2379.gpsapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import dev.david.gpsapp.ui.theme.GPSAppTheme
+import dev.david2379.gpsapp.ui.theme.GPSAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

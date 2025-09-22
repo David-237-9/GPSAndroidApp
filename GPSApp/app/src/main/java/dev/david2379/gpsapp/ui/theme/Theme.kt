@@ -1,4 +1,4 @@
-package dev.david.gpsapp.ui.theme
+package dev.david2379.gpsapp.ui.theme
 
 import android.app.Activity
 import android.os.Build
