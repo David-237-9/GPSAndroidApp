@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import dev.david2379.gpsapp.logic.gps.model.GPSLocation
 import dev.david2379.gpsapp.logic.gps.model.GPSLocationGetter
+import dev.david2379.gpsapp.logic.gps.model.LocationPermission
 import dev.david2379.gpsapp.ui.theme.GPSAppTheme
 import dev.david2379.gpsapp.ui.gps.ShowGpsScreen
 import kotlinx.coroutines.Job
@@ -22,6 +23,8 @@ class ShowGpsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
+
+        LocationPermission.init(this) // Request location permission if not granted
 
         val gpsData = GPSLocationGetter(this)
 
