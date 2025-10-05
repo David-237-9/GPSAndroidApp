@@ -36,6 +36,17 @@ class GPSLocationGetter(activity: Activity) {
                             ),
                             currentTime - lastLocation.timestamp
                         ) else 0f,
+                        if (lastLocation != null) meterSecondToKilometerHour(
+                            calculateSpeed(
+                                manuallyCalcLocationsDistance(
+                                    successLocation.latitude,
+                                    successLocation.longitude,
+                                    lastLocation.latitude,
+                                    lastLocation.longitude,
+                                ),
+                                currentTime - lastLocation.timestamp
+                            )
+                        ) else 0f,
                     )
                 )
             } else {
@@ -71,7 +82,7 @@ class GPSLocationGetter(activity: Activity) {
         return results[0]
     }
 
-    private fun copilotCalcLocationsDistance(
+    private fun manuallyCalcLocationsDistance(
         latitude1: Double,
         longitude1: Double,
         latitude2: Double,
