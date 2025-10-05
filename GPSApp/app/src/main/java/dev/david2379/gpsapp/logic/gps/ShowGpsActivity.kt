@@ -15,6 +15,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+const val GPS_REFRESH_RATE_MS = 500L
+
 class ShowGpsActivity : ComponentActivity() {
     private var refreshGpsJob: Job? = null
 
@@ -26,19 +28,24 @@ class ShowGpsActivity : ComponentActivity() {
         setContent {
             var gpsLocation by remember { mutableStateOf<GPSLocation?>(null) }
 
-            fun startRefreshGpsJob() {
-                refreshGpsJob = lifecycleScope.launch {
-                    while (true) {
-                        println("Refreshing GPS Location...")
-                        gpsData.getLocation(onResult = { newLocation ->
-                            println("Got new GPS Location: $newLocation")
+            fun startRefreshJob () {
+                refreshGpsJob?.cancel()
+                refreshGpsJob = lifecycleScope.launch { // Start a coroutine to refresh GPS data
+                    val startTime = System.currentTimeMillis()
+                    gpsData.getLocation(
+                        onResult = { newLocation ->
                             gpsLocation = newLocation
-                        })
-                        delay(2000) // Refresh rate
-                    }
+                            val waitTime = GPS_REFRESH_RATE_MS - (System.currentTimeMillis() - startTime)
+                            lifecycleScope.launch {
+                                if (waitTime > 0) delay(waitTime)
+                                startRefreshJob()
+                            }
+                        },
+                        gpsLocation,
+                    )
                 }
             }
-            startRefreshGpsJob()
+            startRefreshJob()
 
             GPSAppTheme {
                 ShowGpsScreen(gpsLocation)

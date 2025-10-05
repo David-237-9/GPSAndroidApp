@@ -1,0 +1,14 @@
+-----------------------------
+This file contains the history of the changes made to the application.
+
+
+----- 05/10/2025 -----
+- Added speed calculations
+
+----- 22/09/2025 -----
+- Basic UI implemented
+
+----- 21/09/2025 -----
+- Application created and working
+
+-----------------------------
