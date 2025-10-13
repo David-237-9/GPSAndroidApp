@@ -27,15 +27,6 @@ class GPSLocationGetter(activity: Activity) {
                         successLocation.latitude,
                         successLocation.longitude,
                         successLocation.speed,
-                        if (lastLocation != null) calculateSpeed(
-                            calcLocationsDistance(
-                                successLocation.latitude,
-                                successLocation.longitude,
-                                lastLocation.latitude,
-                                lastLocation.longitude,
-                            ),
-                            currentTime - lastLocation.timestamp
-                        ) else 0f,
                         if (lastLocation != null) meterSecondToKilometerHour(
                             calculateSpeed(
                                 manuallyCalcLocationsDistance(
@@ -66,21 +57,6 @@ class GPSLocationGetter(activity: Activity) {
     }
 
     private fun meterSecondToKilometerHour(speed: Float): Float = speed * 3.6f
-
-    private fun calcLocationsDistance(
-        latitude1: Double,
-        longitude1: Double,
-        latitude2: Double,
-        longitude2: Double,
-    ): Float {
-        val results = FloatArray(1)
-        android.location.Location.distanceBetween(
-            latitude1, longitude1,
-            latitude2, longitude2,
-            results
-        )
-        return results[0]
-    }
 
     private fun manuallyCalcLocationsDistance(
         latitude1: Double,

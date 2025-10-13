@@ -5,6 +5,5 @@ data class GPSLocation (
     val latitude: Double,
     val longitude: Double,
     val locationSpeed: Float,
-    val locationCalculatedSpeed: Float,
     val locationManuallyCalculatedSpeed: Float,
 )
