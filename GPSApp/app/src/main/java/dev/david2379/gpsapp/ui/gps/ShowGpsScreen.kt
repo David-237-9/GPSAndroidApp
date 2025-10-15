@@ -19,6 +19,10 @@ fun ShowGpsScreen(gpsData: GPSLocation?) {
                 Text("Timestamp: ${Date(gpsData.timestamp)}")
                 Text("Location Speed: ${gpsData.locationSpeed}kmh")
                 Text("Location Manually Calculated Speed: ${gpsData.locationManuallyCalculatedSpeed}kmh")
+                Text("Average Location Speed: ${gpsData.averageLocationSpeed}")
+                Text("Average Location Calculated Speed: ${gpsData.averageLocationManuallyCalculatedSpeed}")
+                Text("Location Speed List: ${gpsData.locationSpeedList}")
+                Text("Location Calculated Speed List: ${gpsData.locationManuallyCalculatedSpeedList}")
             } else {
                 Text("No GPS Data")
             }

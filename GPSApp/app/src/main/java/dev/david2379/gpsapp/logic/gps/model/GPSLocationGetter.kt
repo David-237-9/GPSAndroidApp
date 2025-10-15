@@ -21,23 +21,41 @@ class GPSLocationGetter(activity: Activity) {
         ).addOnSuccessListener { successLocation ->
             if (successLocation != null) {
                 val currentTime = System.currentTimeMillis()
+                val speedFromLocation = successLocation.speed
+                val calculatedSpeed = if (lastLocation != null) meterSecondToKilometerHour(
+                    calculateSpeed(
+                        manuallyCalcLocationsDistance(
+                            successLocation.latitude,
+                            successLocation.longitude,
+                            lastLocation.latitude,
+                            lastLocation.longitude,
+                        ),
+                        currentTime - lastLocation.timestamp
+                    )
+                ) else 0f
+                var counter1 = 0f
+                var counter2 = 0f
+                lastLocation?.locationSpeedList?.forEach { counter1 += it }
+                lastLocation?.locationManuallyCalculatedSpeedList?.forEach { counter2 += it }
+                val average1 = (counter1 + speedFromLocation) / if (counter1 == 0f) 1 else lastLocation!!.locationSpeedList.size
+                val average2 = (counter2 + calculatedSpeed) / if (counter2 == 0f) 1 else lastLocation!!.locationManuallyCalculatedSpeedList.size
                 onResult(
                     GPSLocation(
                         currentTime,
                         successLocation.latitude,
                         successLocation.longitude,
-                        successLocation.speed,
-                        if (lastLocation != null) meterSecondToKilometerHour(
-                            calculateSpeed(
-                                manuallyCalcLocationsDistance(
-                                    successLocation.latitude,
-                                    successLocation.longitude,
-                                    lastLocation.latitude,
-                                    lastLocation.longitude,
-                                ),
-                                currentTime - lastLocation.timestamp
-                            )
-                        ) else 0f,
+                        speedFromLocation,
+                        calculatedSpeed,
+                        lastLocation?.locationSpeedList?.let {
+                            if (it.size >= 100) it.drop(1) + successLocation.speed
+                            else it + successLocation.speed
+                        } ?: listOf(speedFromLocation),
+                        lastLocation?.locationManuallyCalculatedSpeedList?.let {
+                            if (it.size >= 100) it.drop(1) + calculatedSpeed
+                            else it + calculatedSpeed
+                        } ?: listOf(calculatedSpeed),
+                        average1,
+                        average2,
                     )
                 )
             } else {
