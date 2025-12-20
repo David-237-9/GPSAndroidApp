@@ -4,6 +4,7 @@ data class GPSLocation (
     val timestamp: Long,
     val latitude: Double,
     val longitude: Double,
-    val locationManuallyCalculatedSpeed: Float,
-    val locationManuallyCalculatedSpeedList: List<Float>,
+    val lastCalculatedSpeed: Float,
+    val calculatedSpeedList: List<Float>,
+    val averageSpeed: Float,
 )

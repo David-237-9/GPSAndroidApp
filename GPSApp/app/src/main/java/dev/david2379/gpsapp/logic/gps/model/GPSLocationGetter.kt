@@ -10,6 +10,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+const val SPEED_LIST_SIZE = 5
+
 class GPSLocationGetter(private val activity: Activity) {
 
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
@@ -33,14 +35,21 @@ class GPSLocationGetter(private val activity: Activity) {
                 )
             ) } ?: 0f
 
+            val calculatedSpeedList = lastLocation?.calculatedSpeedList?.let {
+                if (it.size >= SPEED_LIST_SIZE) it.drop(1) + calculatedSpeed
+                else it + calculatedSpeed
+            } ?: listOf(calculatedSpeed)
+
+            val averageSpeed = if (calculatedSpeedList.isNotEmpty()) {
+                calculatedSpeedList.sum() / calculatedSpeedList.size
+            } else 0f
+
             val newLocation = GPSLocation(currentTime,
                 successLocation.latitude,
                 successLocation.longitude,
                 calculatedSpeed,
-                lastLocation?.locationManuallyCalculatedSpeedList?.let {
-                    if (it.size >= 100) it.drop(1) + calculatedSpeed
-                    else it + calculatedSpeed
-                } ?: listOf(calculatedSpeed),
+                calculatedSpeedList,
+                averageSpeed,
             )
 
             lastLocation = newLocation
