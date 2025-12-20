@@ -4,7 +4,8 @@ This file contains the history of the changes made to the application.
 
 ----- 20/12/2025 -----
 - GPS accuracy improved (it is now precise);
-- UI update
+- UI update;
+- Added altitude information
 
 ----- 05/10/2025 -----
 - Added speed calculations;

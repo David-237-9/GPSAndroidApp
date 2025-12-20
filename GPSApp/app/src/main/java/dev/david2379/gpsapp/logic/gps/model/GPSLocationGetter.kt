@@ -2,7 +2,9 @@ package dev.david2379.gpsapp.logic.gps.model
 
 import android.Manifest
 import android.app.Activity
+import android.os.Build
 import android.os.Looper
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import com.google.android.gms.location.*
 import kotlin.math.atan2
@@ -19,6 +21,7 @@ class GPSLocationGetter(private val activity: Activity) {
     private var onUpdate: ((GPSLocation?) -> Unit)? = null
 
     private val locationCallback = object : LocationCallback() {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(result: LocationResult) {
             val successLocation = result.lastLocation ?: return
             val currentTime = System.currentTimeMillis()
@@ -47,6 +50,8 @@ class GPSLocationGetter(private val activity: Activity) {
             val newLocation = GPSLocation(currentTime,
                 successLocation.latitude,
                 successLocation.longitude,
+                successLocation.altitude,
+                successLocation.verticalAccuracyMeters,
                 calculatedSpeed,
                 calculatedSpeedList,
                 averageSpeed,

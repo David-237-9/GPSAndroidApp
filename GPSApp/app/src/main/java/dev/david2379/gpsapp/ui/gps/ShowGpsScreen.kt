@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.david2379.gpsapp.logic.gps.model.GPSLocation
+import java.text.DateFormat
 import java.util.Date
 
 @Composable
@@ -52,18 +53,28 @@ fun ShowGpsScreen(gpsData: GPSLocation?) {
                         )
 
                         InfoRow(
-                            label = "Timestamp",
-                            value = Date(gpsData.timestamp).toString()
+                            label = "Altitude Above Sea Level",
+                            value = "%.2f".format(gpsData.altitude) + " +-50 meters"
+                        )
+
+                        InfoRow(
+                            label = "Vertical Accuracy",
+                            value = "%.2f".format(gpsData.verticalAccuracyMeters) + " meters"
+                        )
+
+                        InfoRow(
+                            label = "Last Update",
+                            value = DateFormat.getDateTimeInstance().format(Date(gpsData.timestamp))
                         )
 
                         InfoRow(
                             label = "Calculated Speed",
-                            value = "${gpsData.lastCalculatedSpeed} km/h"
+                            value = "%.2f".format(gpsData.lastCalculatedSpeed) + " km/h",
                         )
 
                         InfoRow(
                             label = "Average Speed",
-                            value = "${gpsData.averageSpeed} km/h"
+                            value = "%.2f".format(gpsData.averageSpeed) + " km/h",
                         )
                     }
                 }
