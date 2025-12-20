@@ -22,7 +22,7 @@ import java.text.DateFormat
 import java.util.Date
 
 @Composable
-fun ShowGpsScreen(gpsData: GPSLocation?) {
+fun GpsScreen(gpsData: GPSLocation?) {
     Scaffold { innerPadding ->
         Box(
             modifier = Modifier

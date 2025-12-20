@@ -11,14 +11,13 @@ import dev.david2379.gpsapp.logic.gps.model.GPSLocation
 import dev.david2379.gpsapp.logic.gps.model.GPSLocationGetter
 import dev.david2379.gpsapp.logic.gps.model.LocationPermission
 import dev.david2379.gpsapp.ui.theme.GPSAppTheme
-import dev.david2379.gpsapp.ui.gps.ShowGpsScreen
+import dev.david2379.gpsapp.ui.gps.GpsScreen
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val GPS_REFRESH_RATE_MS = 500L
 
-class ShowGpsActivity : ComponentActivity() {
+class GpsActivity : ComponentActivity() {
     private var refreshGpsJob: Job? = null
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
@@ -50,7 +49,7 @@ class ShowGpsActivity : ComponentActivity() {
             startRefreshJob()
 
             GPSAppTheme {
-                ShowGpsScreen(gpsLocation)
+                GpsScreen(gpsLocation)
             }
         }
     }
