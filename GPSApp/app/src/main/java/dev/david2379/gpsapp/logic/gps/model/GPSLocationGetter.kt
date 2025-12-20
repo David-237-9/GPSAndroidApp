@@ -2,68 +2,82 @@ package dev.david2379.gpsapp.logic.gps.model
 
 import android.Manifest
 import android.app.Activity
+import android.os.Looper
 import androidx.annotation.RequiresPermission
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import com.google.android.gms.location.*
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class GPSLocationGetter(activity: Activity) {
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+class GPSLocationGetter(private val activity: Activity) {
 
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    fun getLocation(onResult: (GPSLocation?) -> Unit, lastLocation: GPSLocation?) {
-        fusedLocationClient.getCurrentLocation(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            null
-        ).addOnSuccessListener { successLocation ->
-            if (successLocation != null) {
-                val currentTime = System.currentTimeMillis()
-                val speedFromLocation = successLocation.speed
-                val calculatedSpeed = if (lastLocation != null) meterSecondToKilometerHour(
-                    calculateSpeed(
-                        manuallyCalcLocationsDistance(
-                            successLocation.latitude,
-                            successLocation.longitude,
-                            lastLocation.latitude,
-                            lastLocation.longitude,
-                        ),
-                        currentTime - lastLocation.timestamp
-                    )
-                ) else 0f
-                var counter1 = 0f
-                var counter2 = 0f
-                lastLocation?.locationSpeedList?.forEach { counter1 += it }
-                lastLocation?.locationManuallyCalculatedSpeedList?.forEach { counter2 += it }
-                val average1 = (counter1 + speedFromLocation) / if (counter1 == 0f) 1 else lastLocation!!.locationSpeedList.size
-                val average2 = (counter2 + calculatedSpeed) / if (counter2 == 0f) 1 else lastLocation!!.locationManuallyCalculatedSpeedList.size
-                onResult(
-                    GPSLocation(
-                        currentTime,
+    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+    private var lastLocation: GPSLocation? = null
+    private var onUpdate: ((GPSLocation?) -> Unit)? = null
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            val successLocation = result.lastLocation ?: return
+            val currentTime = System.currentTimeMillis()
+
+            val calculatedSpeed = lastLocation?.let { meterSecondToKilometerHour(
+                calculateSpeed(
+                    manuallyCalcLocationsDistance(
                         successLocation.latitude,
                         successLocation.longitude,
-                        speedFromLocation,
-                        calculatedSpeed,
-                        lastLocation?.locationSpeedList?.let {
-                            if (it.size >= 100) it.drop(1) + successLocation.speed
-                            else it + successLocation.speed
-                        } ?: listOf(speedFromLocation),
-                        lastLocation?.locationManuallyCalculatedSpeedList?.let {
-                            if (it.size >= 100) it.drop(1) + calculatedSpeed
-                            else it + calculatedSpeed
-                        } ?: listOf(calculatedSpeed),
-                        average1,
-                        average2,
-                    )
+                        it.latitude,
+                        it.longitude,
+                    ),
+                    currentTime - it.timestamp
                 )
-            } else {
-                onResult(null)
-            }
-        }.addOnFailureListener { exception ->
-            onResult(null)
+            ) } ?: 0f
+
+            val newLocation = GPSLocation(currentTime,
+                successLocation.latitude,
+                successLocation.longitude,
+                calculatedSpeed,
+                lastLocation?.locationManuallyCalculatedSpeedList?.let {
+                    if (it.size >= 100) it.drop(1) + calculatedSpeed
+                    else it + calculatedSpeed
+                } ?: listOf(calculatedSpeed),
+            )
+
+            lastLocation = newLocation
+            onUpdate?.invoke(newLocation)
         }
+    }
+
+    /**
+     * Start continuous GPS updates.
+     * The callback returns fine-grained GPS location with speed calculations.
+     */
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    fun startLocationUpdates(onResult: (GPSLocation?) -> Unit) {
+        this.onUpdate = onResult
+
+        val request = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            1000L // update interval in ms
+        )
+            .setWaitForAccurateLocation(true) // ensures GPS fix
+            .setMinUpdateIntervalMillis(500L)
+            .setMaxUpdateDelayMillis(0L)
+            .build()
+
+        fusedLocationClient.requestLocationUpdates(
+            request,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+    }
+
+    /**
+     * Stop GPS updates to save battery.
+     */
+    fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        onUpdate = null
     }
 
     /**

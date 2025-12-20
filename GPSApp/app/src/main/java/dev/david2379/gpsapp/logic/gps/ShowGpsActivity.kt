@@ -32,21 +32,18 @@ class ShowGpsActivity : ComponentActivity() {
             var gpsLocation by remember { mutableStateOf<GPSLocation?>(null) }
             var counter by remember { mutableStateOf(0) }
 
-            fun startRefreshJob () {
+            fun startRefreshJob() {
+                // Cancel any existing job just in case
                 refreshGpsJob?.cancel()
-                refreshGpsJob = lifecycleScope.launch { // Start a coroutine to refresh GPS data
-                    val startTime = System.currentTimeMillis()
-                    val waitTime = GPS_REFRESH_RATE_MS - (System.currentTimeMillis() - startTime)
-//                    if (waitTime > 0) delay(waitTime)
-                    delay(GPS_REFRESH_RATE_MS) // Ensure a fixed refresh rate
-                    startRefreshJob()
-                    gpsData.getLocation(
-                        onResult = { newLocation ->
-                            println("NEW LOCATION #${++counter} " + System.currentTimeMillis())
+
+                // Start a coroutine to subscribe to GPS updates
+                refreshGpsJob = lifecycleScope.launch {
+                    gpsData.startLocationUpdates { newLocation ->
+                        if (newLocation != null) {
+                            println("NEW LOCATION #${++counter} ${System.currentTimeMillis()}")
                             gpsLocation = newLocation
-                        },
-                        gpsLocation,
-                    )
+                        }
+                    }
                 }
             }
             println("STARTING GPS REFRESH " + System.currentTimeMillis())
