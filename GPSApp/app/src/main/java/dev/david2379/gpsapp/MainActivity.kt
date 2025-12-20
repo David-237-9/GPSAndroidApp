@@ -17,6 +17,9 @@ class MainActivity : ComponentActivity() {
         }
 
         super.onCreate(savedInstanceState)
+
+        startActivity(navigateToGPSLocationIntent) // Automatically navigate to GPS screen on app launch
+
         enableEdgeToEdge()
         setContent {
             GPSAppTheme {
