@@ -54,7 +54,7 @@ fun GpsScreen(gpsData: GPSLocation?) {
 
                         InfoRow(
                             label = "Altitude Above Sea Level",
-                            value = "%.2f".format(gpsData.altitude) + " +-50 meters"
+                            value = "%.2f".format(gpsData.altitude) + " meters"
                         )
 
                         InfoRow(
