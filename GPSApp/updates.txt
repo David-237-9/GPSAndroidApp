@@ -2,6 +2,9 @@
 This file contains the history of the changes made to the application.
 
 
+----- 08/01/2026 -----
+- GPS Satellites count
+
 ----- 20/12/2025 -----
 - GPS accuracy improved (it is now precise);
 - UI update;

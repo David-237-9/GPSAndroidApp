@@ -76,6 +76,11 @@ fun GpsScreen(gpsData: GPSLocation?) {
                             label = "Average Speed",
                             value = "%.2f".format(gpsData.averageSpeed) + " km/h",
                         )
+
+                        InfoRow(
+                            label = "Satellites in Use",
+                            value = gpsData.satelliteCount.toString()
+                        )
                     }
                 }
             } else {

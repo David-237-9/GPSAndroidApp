@@ -20,6 +20,8 @@ class GPSLocationGetter(private val activity: Activity) {
     private var lastLocation: GPSLocation? = null
     private var onUpdate: ((GPSLocation?) -> Unit)? = null
 
+    private val satelliteCounter = GPSSatelliteCounter(activity)
+
     private val locationCallback = object : LocationCallback() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onLocationResult(result: LocationResult) {
@@ -55,6 +57,7 @@ class GPSLocationGetter(private val activity: Activity) {
                 calculatedSpeed,
                 calculatedSpeedList,
                 averageSpeed,
+                satelliteCounter.getSatelliteCount()
             )
 
             lastLocation = newLocation
@@ -84,6 +87,8 @@ class GPSLocationGetter(private val activity: Activity) {
             locationCallback,
             Looper.getMainLooper()
         )
+
+        satelliteCounter.startSatelliteListener()
     }
 
     /**
